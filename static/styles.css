@@ -1,26 +1,23 @@
 
-body {
+body, head {
     font-family: "Raleway", sans-serif;
 }
-form {
-    display: block;
-}
-h1 {
-    font-family: "Raleway";
-    font-size: 2rem;
-    line-height: 1rem;
-}
- h2 {
-    font-size: 1.5rem;
 
- }
-p {
-  font-family: "Raleway";
+h1 {
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+.new_blog {
+    width: 200px;
+    height: 150px;
+    border: 1px solid black;
+    font-size: 1rem;
+    font-family:
 }
 
 input {
     margin: auto;
-    padding: 0.6rem;
     border: 1px solid black;
     font-size: 1rem;
 }
