@@ -23,6 +23,8 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
+
+
 @app.route('/blog', methods = ["GET","POST"])
 def blog():
     post_id = request.args.get('id')
@@ -32,7 +34,6 @@ def blog():
     else:
         all_blog_posts = Blog.query.all()
         return render_template('blog.html', blogs=all_blog_posts)
-
 
 
 @app.route('/newpost', methods = ['POST','GET'])
@@ -48,22 +49,12 @@ def new_post():
             new_post = Blog(title,body)
             db.session.add(new_post)
             db.session.commit()
-            return redirect('/blog')
+            post_link = "/blog?id=" + str(new_post.id)
+            return redirect(post_link)
 
 
 
     return render_template('newpost.html')
-
-
-
-
-
-
-
-
-
-
-
 
 
 
