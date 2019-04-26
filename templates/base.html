@@ -5,13 +5,21 @@
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}"/>
     <style>h1{text-align: center}</style>
     <div>
-      <a href = "/blog">Main Blog Page</a> | <a href = "/newpost">Add a Blog Entry</a>
+      <a href = "/">Home</a> | <a href = "/blog">All Posts</a> | <a href = "/newpost">New Post</a>
+    </div>
+    <div style='float: right'>
+      {% if 'username' in session %}
+        {{ session['username'] }} | <a href="/logout" method="post">logout</a>
+      {% else %}
+        <a href="/login">login</a> | <a href="/signup">register</a>
+      {% endif %}
     </div>
     <br><br>
-    <title>Build A Blog</title>
+    <title>Blogz</title>
   </head>
 
 <body>
+
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class=flashes>
