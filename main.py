@@ -17,17 +17,19 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(400))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    pub_date = db.Column(db.DateTime)
 
 
 
-    def __init__(self,title,body,owner):
+    def __init__(self,title,body,owner,pub_date=None):
         self.title = title
         self.body = body
         self.owner = owner
+        self.pub_date = pub_date
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(120))
+    username = db.Column(db.String(120),unique=True)
     password = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref = 'owner')
 
@@ -40,7 +42,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup','signup_complete','list_blogs']
+    allowed_routes = ['login', 'signup','signup_complete','list_blogs','index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -94,7 +96,7 @@ def signup_complete():
 
         count_error = "must be 3-20 characters"
         spaces_error = "cannot contain spaces"
-        #TODO - validate users data
+
 
         existing_user = User.query.filter_by(username=username).first()
         if is_blank(password):
@@ -146,24 +148,29 @@ def signup_complete():
 
 
 
-@app.route('/', methods = ['GET','POST'])
-def list_blogs():
-    all_users = User.query.filter_by(username="username").all()
-    return render_template("index.html",users=all_users)
+@app.route('/')
+def index():
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
 
 
 
 @app.route('/blog', methods = ["GET","POST"])
-def ind_blog():
-    post_id = request.args.get('id')
-    owner = User.query.filter_by(username= session['username']).first()
-    if (post_id):
-        view_post = Blog.query.get(post_id)
-        return render_template('view-post.html', view_post=view_post)
-    else:
-        all_blog_posts = Blog.query.all()
-        return render_template('blog.html', blogs=all_blog_posts)
+def blog():
+    blog_id = request.args.get('id')
+    user_id = request.args.get('userid')
+
+    posts = Blog.query.order_by(Blog.pub_date.desc())
+
+    if blog_id:
+        post = Blog.query.filter_by(id=blog_id).first()
+        return render_template("view-post.html", title=post.title, body=post.body, user=post.owner.username, pub_date=post.pub_date, user_id=post.owner_id)
+    if user_id:
+        entries = Blog.query.filter_by(owner_id=user_id).all()
+        return render_template('user.html', entries=entries)
+
+    return render_template('blog.html', posts=posts)
 
 
 
@@ -181,16 +188,16 @@ def new_post():
             new_post = Blog(title,body,owner)
             db.session.add(new_post)
             db.session.commit()
-            post_link = "/blog?id=" + str(new_post.id)
-            return redirect(post_link)
+            page_id= new_post.id
+            return redirect("/blog?id={0}".format(page_id))
 
 
     return render_template('newpost.html')
 
 
-@app.route("/logout", methods=['POST'])
+@app.route("/logout")
 def logout():
-    del session['username']
+    del session["username"]
     return redirect("/login")
 
 
