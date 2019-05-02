@@ -22,11 +22,25 @@ h1 {
 p{
     font-size: 1rem;
 }
-p.title{
-    font-size: 1.5rem;
+
+p.body-text{
+    font-size: 20px;
 }
-.pub_date{
-    font-size: .5rem;
+
+p.title{
+    font-size: 25px;
+}
+
+h2.title{
+    font-size: 25px;
+}
+
+.pub-date{
+    font-size: 14px;
+}
+
+p.user{
+    font-size: 14px;
 }
 
 input {
@@ -34,7 +48,6 @@ input {
     border: 1px solid black;
     font-size: 1rem;
 }
-
 
 input.submit {
     width: auto;
