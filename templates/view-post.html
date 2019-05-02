@@ -2,12 +2,13 @@
 
 {% block content %}
 
-<h1 class= "title">Blog Posts</h1>
+<h1 class= "title">{{title}}</h1>
 
+  <br>
     <div>
-            <h2>{{title}}</h2>
+            <h2>{{post_title}}</h2>
             <p>{{body}}</p>
-            <p class="user">Posted by: <a href="/blog?userid={{post.owner_id}}">{{ post.owner.username }}</a></p>
+            <p class="user">Posted by: <a href="/blog?userid={{user_id}}">{{user}}</a></p>
     </div>
 
 

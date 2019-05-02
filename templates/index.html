@@ -2,10 +2,12 @@
 
 {% block content %}
       <div class="index">
-        <h1>All Users</h1>
-        <hr>
+        <h1>{{title}}</h1>
+        <br>
         {% for user in users %}
-        <p class="users"><a href="/blog?userid={{user.id}}">{{ user.username }}</a></p>
+        <ul>
+          <li class="users"><a href="/blog?userid={{user.id}}">{{ user.username }}</a></li>
+        </ul>
         {% endfor %}
       </div>
 {% endblock %}

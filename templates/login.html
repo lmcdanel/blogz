@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Log in</h1>
+<h1>{{title}}</h1>
+
+<br>
 <form action="/login" method="post">
-    <table>
+  <table cellspacing= "15">
+    <tbody>
         <tr>
             <td><label for="username">Username</label></td>
             <td>
@@ -22,8 +25,9 @@
             <span class= "error"> {{password_error}}</span>
             </td>
         </tr>
+      </tbody>
     </table>
-    <input type="submit" value="Login">
+    <input class="submit" type="submit" value="Login">
     <br><br>
 </form>
 <p class="signup">If you don't have an account, click <a href="/signup">here</a> to create one</p>

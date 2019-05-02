@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template,session,flash
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import cgi
 
 app = Flask(__name__)
@@ -17,7 +18,8 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(400))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    pub_date = db.Column(db.DateTime)
+    pub_date = db.Column(db.DateTime, nullable=False,
+        default=datetime.utcnow)
 
 
 
@@ -42,7 +44,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup','signup_complete','list_blogs','index']
+    allowed_routes = ['login', 'signup','signup_complete','blog','index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -59,17 +61,17 @@ def login():
             return redirect('/newpost')
         elif not user:
             username_error = "User does not exist, please create an account below"
-            return render_template('login.html',username_error=username_error)
+            return render_template('login.html',username_error=username_error,title="Login")
         elif user and user.password != password:
             password_error = "Username and Password do not match, please try again"
-            return render_template('login.html',password_error=password_error)
+            return render_template('login.html',password_error=password_error,title="Login")
 
-    return render_template('login.html')
+    return render_template('login.html',title="Login")
 
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html')
+    return render_template('signup.html',title="Sign up for an Account")
 
 def is_blank(input):
     if input:
@@ -142,7 +144,7 @@ def signup_complete():
         session['username'] = username
         return redirect('/newpost')
     else:
-        return render_template('signup.html', username_error=username_error, username=username,
+        return render_template('signup.html',title="Sign up for an Account", username_error=username_error, username=username,
         password_error=password_error, password=password, verify_password_error=verify_password_error,
         verify_password=verify_password)
 
@@ -151,7 +153,7 @@ def signup_complete():
 @app.route('/')
 def index():
     users = User.query.all()
-    return render_template('index.html', users=users)
+    return render_template('index.html',title="All Users", users=users)
 
 
 
@@ -165,12 +167,12 @@ def blog():
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
-        return render_template("view-post.html", title=post.title, body=post.body, user=post.owner.username, pub_date=post.pub_date, user_id=post.owner_id)
+        return render_template("view-post.html",title="Blog Posts", post_title=post.title, body=post.body, user=post.owner.username, pub_date=post.pub_date, user_id=post.owner_id)
     if user_id:
-        entries = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('user.html', entries=entries)
+        entries = Blog.query.filter_by(owner_id=user_id).order_by(Blog.pub_date.desc()).all()
+        return render_template('user.html', title="User Posts", entries=entries)
 
-    return render_template('blog.html', posts=posts)
+    return render_template('blog.html',title= "Blog Posts", posts=posts)
 
 
 
@@ -188,11 +190,11 @@ def new_post():
             new_post = Blog(title,body,owner)
             db.session.add(new_post)
             db.session.commit()
-            page_id= new_post.id
-            return redirect("/blog?id={0}".format(page_id))
+            post_id= new_post.id
+            return redirect("/blog?id={0}".format(post_id))
 
 
-    return render_template('newpost.html')
+    return render_template('newpost.html', title="Add a Blog Entry")
 
 
 @app.route("/logout")
@@ -202,19 +204,6 @@ def logout():
 
 
 
-
-#owner = User.query.filter_by(email = session['email']).first()
-
-#if request.method == 'POST':
-#    task_name = request.form['task']
-#    new_task = Blog(task_name, owner)
-#    db.session.add(new_task)
-#    db.session.commit()
-
-#tasks = Task.query.filter_by(completed=False, owner=owner).all()
-#completed_tasks = Task.query.filter_by(completed=True, owner=owner).all()
-#return render_template('todos.html',title="Get It Done!", tasks=tasks,
-#completed_tasks=completed_tasks)
 
 
 

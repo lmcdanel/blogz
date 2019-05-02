@@ -1,5 +1,6 @@
-header{
-    background-color: lightgray;
+html{
+  margin: 0;
+  padding: 0;
 }
 body{
     font-family: "Raleway", sans-serif;
@@ -9,14 +10,23 @@ h1 {
     width: 100%;
     margin: auto;
     text-align: center;
-    background-color: lightgray;
+    border-bottom: solid 1px black;
 }
 .new_blog {
     width: 200px;
     height: 150px;
     border: 1px solid black;
     font-size: 1rem;
-    font-family:
+    font-family: "Arial", sans-serif;
+}
+p{
+    font-size: 1rem;
+}
+p.title{
+    font-size: 1.5rem;
+}
+.pub_date{
+    font-size: .5rem;
 }
 
 input {
